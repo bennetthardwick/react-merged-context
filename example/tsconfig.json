@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
     "target": "es5",
     "module": "commonjs",
     "jsx": "react",
+    "esModuleInterop": true,
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noUnusedLocals": false,
