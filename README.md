@@ -1,172 +1,112 @@
-# TSDX React w/ Storybook User Guide
+# react-merged-context
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+A very simple library for creating a "merged context provider" - a context provider that merges it's input with values from up the tree.
 
-> This TSDX setup is meant for developing React component libraries (not apps!) that can be published to NPM. If you’re looking to build a React-based app, you should use `create-react-app`, `razzle`, `nextjs`, `gatsby`, or `react-static`.
+## Installation
 
-> If you’re new to TypeScript and React, checkout [this handy cheatsheet](https://github.com/sw-yx/react-typescript-cheatsheet/)
-
-## Commands
-
-TSDX scaffolds your new library inside `/src`, and also sets up a [Parcel-based](https://parceljs.org) playground for it inside `/example`.
-
-The recommended workflow is to run TSDX in one terminal:
+This package lives in [npm](https://www.npmjs.com/get-npm). To install the latest stable version, run the following command:
 
 ```bash
-npm start # or yarn start
+npm install react-merged-context
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
-
-Then run either Storybook or the example playground:
-
-### Storybook
-
-Run inside another terminal:
+Or if you're using [yarn](https://classic.yarnpkg.com/en/docs/install/):
 
 ```bash
-yarn storybook
+yarn add react-merged-context
 ```
 
-This loads the stories from `./stories`.
+## Usage
 
-> NOTE: Stories should reference the components as if using the library, similar to the example playground. This means importing from the root project directory. This has been aliased in the tsconfig and the storybook webpack config as a helper.
+You can create a merged context provider by passing your context to the `createMergedProvider` method.
+This will return a "merged context provider" which you can use 
 
-### Example
+```ts
+import { createContext } from 'react';
+import { createMergedProvider } from 'react-merged-context';
 
-Then run the example inside another:
+const MyContext = createContext({ name: 'Sarah' })
+const MyContextProvider = createMergedProvider(MyContext);
 
-```bash
-cd example
-npm i # or yarn to install dependencies
-npm start # or yarn start
+const element = <MyContextProvider value={...}>
+...
+</MyContextProvider>;
 ```
 
-The default example imports and live reloads whatever is in `/dist`, so if you are seeing an out of date component, make sure TSDX is running in watch mode like we recommend above. **No symlinking required**, we use [Parcel's aliasing](https://parceljs.org/module_resolution.html#aliases).
+### Getting the value
 
-To do a one-off build, use `npm run build` or `yarn build`.
+Since `createMergedProvider` just creates a "Provider" component, you can retrieve the value from the context using the normal methods - either through `Context.Consumer` or `useContext`.
 
-To run tests, use `npm test` or `yarn test`.
+### Objects
 
-## Configuration
+Merged context providers can be used to apply a diff to the context.
 
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
+```ts
+import { createContext } from 'react';
+import { createMergedProvider } from 'react-merged-context';
 
-### Jest
+const MyContext = createContext({ name: 'Bennett', age: 22 })
+const MyContextProvider = createMergedProvider(MyContext);
 
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/example
-  index.html
-  index.tsx       # test your component here in a demo app
-  package.json
-  tsconfig.json
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
+const element = <MyContextProvider value={{ name: 'Sarah' }}>
+  <MyContext.Consumer>
+    ({ name, age }) => {
+      // `name` is 'Sarah' but `age` is still 22
+    }
+  </MyContext.Consumer>
+</MyContextProvider>;
 ```
 
-#### React Testing Library
+### Arrays
 
-We do not set up `react-testing-library` for you yet, we welcome contributions and documentation on this.
+Merged context providers can be used to apply a diff to the context.
 
-### Rollup
+```ts
+import { createContext } from 'react';
+import { createMergedProvider } from 'react-merged-context';
 
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
+const MyContext = createContext([ 1, 2, 3 ])
+const MyContextProvider = createMergedProvider(MyContext);
 
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-A simple action is included that runs these steps on all pushes:
-
-- Installs deps w/ cache
-- Lints, tests, and builds
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
-}
+const element = <MyContextProvider value={[ 4, 5, 6 ]}>
+  <MyContext.Consumer>
+    (values) => {
+      // values is [ 1, 2, 3, 4, 5, 6 ]
+    }
+  </MyContext.Consumer>
+</MyContextProvider>;
 ```
 
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
+### Resetting with React context providers
 
-## Module Formats
+If you don't want the values to be merged, you can use normal contexts.
 
-CJS, ESModules, and UMD module formats are supported.
+```ts
+import { createContext } from 'react';
+import { createMergedProvider } from 'react-merged-context';
 
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
+const MyContext = createContext([ 1, 2, 3 ])
+const MyContextProvider = createMergedProvider(MyContext);
 
-## Deploying the Example Playground
-
-The Playground is just a simple [Parcel](https://parceljs.org) app, you can deploy it anywhere you would normally deploy that. Here are some guidelines for **manually** deploying with the Netlify CLI (`npm i -g netlify-cli`):
-
-```bash
-cd example # if not already in the example folder
-npm run build # builds to dist
-netlify deploy # deploy the dist folder
+const element = <MyContext.Provider value={[]}>
+  <MyContextProvider value={[ 4, 5, 6 ]}>
+    <MyContext.Consumer>
+      (values) => {
+        // values is [ 4, 5, 6 ]
+      }
+    </MyContext.Consumer>
+  </MyContextProvider>;
+</MyContext.Provider>
 ```
 
-Alternatively, if you already have a git repo connected, you can set up continuous deployment with Netlify:
+## Example
 
-```bash
-netlify init
-# build command: yarn build && cd example && yarn && yarn build
-# directory to deploy: example/dist
-# pick yes for netlify.toml
-```
+To run the example:
+1. navigate to `example/`
+2. install the dependencies by running `yarn`
+3. run `yarn start` to start the dev server
+4. navigate to `localhost:1234`
 
-## Named Exports
+## License
 
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
-
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).
-
-## Usage with Lerna
-
-When creating a new package with TSDX within a project set up with Lerna, you might encounter a `Cannot resolve dependency` error when trying to run the `example` project. To fix that you will need to make changes to the `package.json` file _inside the `example` directory_.
-
-The problem is that due to the nature of how dependencies are installed in Lerna projects, the aliases in the example project's `package.json` might not point to the right place, as those dependencies might have been installed in the root of your Lerna project.
-
-Change the `alias` to point to where those packages are actually installed. This depends on the directory structure of your Lerna project, so the actual path might be different from the diff below.
-
-```diff
-   "alias": {
--    "react": "../node_modules/react",
--    "react-dom": "../node_modules/react-dom"
-+    "react": "../../../node_modules/react",
-+    "react-dom": "../../../node_modules/react-dom"
-   },
-```
-
-An alternative to fixing this problem would be to remove aliases altogether and define the dependencies referenced as aliases as dev dependencies instead. [However, that might cause other problems.](https://github.com/palmerhq/tsdx/issues/64)
+react-merged-context is MIT Licensed.
