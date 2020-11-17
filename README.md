@@ -2,6 +2,8 @@
 
 A simple library for creating a context provider that merges together all the provided values.
 
+Check it out in action at [react-merged-context.netlify.app](https://react-merged-context.netlify.app/).
+
 ## Installation
 
 This package lives in [npm](https://www.npmjs.com/get-npm). To install the latest stable version, run the following command:
@@ -101,7 +103,9 @@ const element = <MyContext.Provider value={[]}>
 
 ## Example
 
-To run the example:
+You can view the example live at [react-merged-context.netlify.app](https://react-merged-context.netlify.app/).
+
+To run the example locally:
 1. navigate to `example/`
 2. install the dependencies by running `yarn`
 3. run `yarn start` to start the dev server
