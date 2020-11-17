@@ -1,6 +1,6 @@
 # react-merged-context
 
-A very simple library for creating a "merged context provider" - a context provider that merges it's input with values from up the tree.
+A simple library for creating a context provider that merges together all the provided values.
 
 ## Installation
 
