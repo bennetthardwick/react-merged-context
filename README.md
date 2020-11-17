@@ -109,4 +109,4 @@ To run the example:
 
 ## License
 
-react-merged-context is MIT Licensed.
+react-merged-context is [MIT Licensed](https://github.com/bennetthardwick/react-merged-context/blob/master/LICENSE).
