@@ -1,0 +1,4 @@
+[build]
+base    = "."
+publish = "./example/dist"
+command = "yarn && cd ./example && yarn && yarn build"
