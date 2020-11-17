@@ -1,6 +1,6 @@
 # react-merged-context
 
-A simple library for creating a context provider that merges together all the provided values.
+A simple library for creating a context provider that merges together the context values throughtout the React tree.
 
 Check it out in action at [react-merged-context.netlify.app](https://react-merged-context.netlify.app/).
 
@@ -61,7 +61,7 @@ const element = <MyContextProvider value={{ name: 'Sarah' }}>
 
 ### Arrays
 
-Merged context providers can be used to apply a diff to the context.
+Merged context providers can also be used to concat arrays.
 
 ```ts
 import { createContext } from 'react';
@@ -81,7 +81,7 @@ const element = <MyContextProvider value={[ 4, 5, 6 ]}>
 
 ### Resetting with React context providers
 
-If you don't want the values to be merged, you can use normal contexts.
+You can use normal context providers to reset the value of the context.
 
 ```ts
 import { createContext } from 'react';
@@ -113,4 +113,4 @@ To run the example locally:
 
 ## License
 
-react-merged-context is [MIT Licensed](https://github.com/bennetthardwick/react-merged-context/blob/master/LICENSE).
+[MIT](https://github.com/bennetthardwick/react-merged-context/blob/master/LICENSE).
